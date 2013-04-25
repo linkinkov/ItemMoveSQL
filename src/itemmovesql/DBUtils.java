@@ -60,7 +60,8 @@ public class DBUtils {
 							"(" +
 							"keyint int unsigned not null auto_increment primary key," +
 							"playername varchar(255)," +
-							"itemid varchar(255)," +
+							"itemid int," +
+							"itemsubid int," +
 							"amount int" +
 							");"
 						);

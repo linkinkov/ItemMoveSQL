@@ -4,5 +4,5 @@ version: 1
 author: Shevchik
 load: STARTUP
 commands:
-  test:
-    usage: test
+  imsql:
+    usage: imsql help
