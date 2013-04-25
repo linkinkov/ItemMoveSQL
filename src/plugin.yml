@@ -1,0 +1,8 @@
+name: ItemMoveSQL
+main: itemmovesql.Main
+version: 1
+author: Shevchik
+load: STARTUP
+commands:
+  test:
+    usage: test
