@@ -18,72 +18,67 @@ public class DBUtils {
 		this.config = config;
 	}
 	
-	private Connection connection = null;
+
 	private Logger log = Bukkit.getLogger();
 	
 	public Connection getConenction()
 	{
-		if (connection == null)
-		{ InitConnection(); }
-		return connection;
+		return InitConnection();
 	}
 	
-	public  void InitConnection()
-			{
-				if (connection == null)
-				{
-					try {
-					boolean dbfound = false;
-					 connection = 	DriverManager.getConnection(config.address,config.login,config.pass);
-					 log.info("[ItemMoveMSQL] Connected to mysql server, checking database");
-						ResultSet rs =  connection.getMetaData().getCatalogs();
-						while( rs.next () ) {
-							if ( rs.getString(1).equals(config.dbname))
-							{
-							log.info("[ItemMoveMSQL] Database found, connecting to it");
-							dbfound = true;	
-							}
-							}
-							rs.close();
-					if (!dbfound)
-					{
-						 log.info("[ItemMoveMSQL] Database not found, creating one for you");
-						Statement st = connection.createStatement();
-						st.executeUpdate("CREATE DATABASE "+config.dbname);
-						st.close();
-					}
-					CloseConnection();
-					 connection = 	DriverManager.getConnection(config.address+config.dbname,config.login,config.pass);
-					Statement st = connection.createStatement();
-					st.executeUpdate(
-							"CREATE TABLE IF NOT EXISTS itemstorage" +
-							"(" +
-							"keyint int unsigned not null auto_increment primary key," +
-							"playername varchar(255)," +
-							"itemid int," +
-							"itemsubid int," +
-							"amount int" +
-							");"
-						);
-					st.close();
-					 log.info("[ItemMoveMSQL] Connected to mysql server and database");
-
-					} catch (SQLException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-
-				}
-			}
-	public  void CloseConnection()
+	public void CreateNeeded()
 	{
+		Connection connection = null;
 		try {
-			connection.close();
+		if (config.checkdb)
+		{
+		 connection = 	DriverManager.getConnection(config.address,config.login,config.pass);
+		 log.info("[ItemMoveMSQL] Connected to mysql server, creating database if not exists");
+			Statement st = connection.createStatement();
+			st.executeUpdate("CREATE DATABASE IF NOT EXISTS "+config.dbname);
+			st.close();
+		connection.close();
+		}
+		connection = 	DriverManager.getConnection(config.address+config.dbname,config.login,config.pass);
+		Statement st = connection.createStatement();
+		st.executeUpdate(
+				"CREATE TABLE IF NOT EXISTS itemstorage" +
+				"(" +
+				"keyint int unsigned not null auto_increment primary key," +
+				"playername varchar(255)," +
+				"itemid int," +
+				"itemsubid int," +
+				"amount int" +
+				");"
+			);
+		st.close();
+		 log.info("[ItemMoveMSQL] Connected to mysql server and database");
+		 connection.close();
+		 
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public  Connection InitConnection()
+			{
+			try {
+		Connection connection = null;
+				
 
+					connection = 	DriverManager.getConnection(config.address+config.dbname,config.login,config.pass);
+
+					
+					return connection;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+
+			}
 	
 }
