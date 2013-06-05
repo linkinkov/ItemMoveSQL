@@ -1,7 +1,7 @@
 name: ItemMoveSQL
 main: itemmovesql.Main
 version: 1
-author: Shevchik
+author: [Shevchik, ptnkjke]
 load: STARTUP
 commands:
   imsql:

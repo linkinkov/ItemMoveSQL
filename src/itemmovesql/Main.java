@@ -1,4 +1,4 @@
-package itemmovesql;
+﻿package itemmovesql;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -31,7 +31,6 @@ public class Main extends JavaPlugin implements CommandExecutor {
 		config = null;
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String cl,
 			String[] args) {
