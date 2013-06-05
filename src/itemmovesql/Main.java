@@ -204,8 +204,8 @@ public class Main extends JavaPlugin implements CommandExecutor {
 
 										public void run() {
 											ItemStack item = new ItemStack(
-													getitemid, getitemsubid);
-											item.setAmount(getamount);
+													getitemid, getamount);
+											item.setDurability((short) getitemsubid);
 											Bukkit.getPlayer(getplayername)
 													.getInventory()
 													.addItem(item);
