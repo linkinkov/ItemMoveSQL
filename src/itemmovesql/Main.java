@@ -31,6 +31,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
 		config = null;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String cl,
 			String[] args) {
