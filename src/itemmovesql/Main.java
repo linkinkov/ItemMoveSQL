@@ -157,69 +157,76 @@ public class Main extends JavaPlugin implements CommandExecutor {
 						viewitems);
 				return true;
 			} else if (args.length == 2 && args[0].equalsIgnoreCase("get")) {
-				final long getitemid = Long.valueOf(args[1]);
-				player.sendMessage("[ItemMoveSQL] Выполняем запрос на получение вещи из БД");
-				Runnable getitem = new Runnable() {
+				if (args[1].matches("^-?\\d+$")) {
+					final long getitemid = Long.valueOf(args[1]);
+					player.sendMessage("[ItemMoveSQL] Выполняем запрос на получение вещи из БД");
+					Runnable getitem = new Runnable() {
 
-					String playername = player.getName();
-					long keyint = getitemid;
+						String playername = player.getName();
+						long keyint = getitemid;
 
-					@Override
-					public void run() {
-						try {
-							Statement st;
-							Connection conn = dbutils.getConenction();
-							st = conn.createStatement(
-									ResultSet.TYPE_SCROLL_SENSITIVE,
-									ResultSet.CONCUR_UPDATABLE);
-							ResultSet result = st
-									.executeQuery("SELECT keyint ,itemid, itemsubid, amount FROM itemstorage WHERE playername = '"
-											+ playername
-											+ "' AND keyint = "
-											+ keyint);
-							if (result.next()) {
-								final int itemid = result.getInt(2);
-								final int itemsubid = result.getInt(3);
-								final int amount = result.getInt(4);
-								result.deleteRow();
-								result.close();
-								conn.close();
-								Bukkit.getScheduler().scheduleSyncDelayedTask(
-										thisclass, new Runnable() {
-											String getplayername = playername;
-											int getitemid = itemid;
-											int getitemsubid = itemsubid;
-											int getamount = amount;
+						@Override
+						public void run() {
+							try {
+								Statement st;
+								Connection conn = dbutils.getConenction();
+								st = conn.createStatement(
+										ResultSet.TYPE_SCROLL_SENSITIVE,
+										ResultSet.CONCUR_UPDATABLE);
+								ResultSet result = st
+										.executeQuery("SELECT keyint ,itemid, itemsubid, amount FROM itemstorage WHERE playername = '"
+												+ playername
+												+ "' AND keyint = " + keyint);
+								if (result.next()) {
+									final int itemid = result.getInt(2);
+									final int itemsubid = result.getInt(3);
+									final int amount = result.getInt(4);
+									result.deleteRow();
+									result.close();
+									conn.close();
+									Bukkit.getScheduler()
+											.scheduleSyncDelayedTask(thisclass,
+													new Runnable() {
+														String getplayername = playername;
+														int getitemid = itemid;
+														int getitemsubid = itemsubid;
+														int getamount = amount;
 
-											public void run() {
-												ItemStack item = new ItemStack(
-														getitemid, getitemsubid);
-												item.setAmount(getamount);
-												Bukkit.getPlayer(getplayername)
-														.getInventory()
-														.addItem(item);
-												Bukkit.getPlayer(getplayername)
-														.sendMessage(
-																"[ItemMoveSQL] Предмет выдан");
+														public void run() {
+															ItemStack item = new ItemStack(
+																	getitemid,
+																	getitemsubid);
+															item.setAmount(getamount);
+															Bukkit.getPlayer(
+																	getplayername)
+																	.getInventory()
+																	.addItem(
+																			item);
+															Bukkit.getPlayer(
+																	getplayername)
+																	.sendMessage(
+																			"[ItemMoveSQL] Предмет выдан");
 
-											}
-										});
-							} else {
-								Bukkit.getPlayer(playername)
-										.sendMessage(
-												"[ItemMoveSQL] запрос на получение вещи отклонён, эта вещь вам не принадлежит");
-								result.close();
-								conn.close();
+														}
+													});
+								} else {
+									Bukkit.getPlayer(playername)
+											.sendMessage(
+													"[ItemMoveSQL] запрос на получение вещи отклонён, эта вещь вам не принадлежит");
+									result.close();
+									conn.close();
+								}
+
+							} catch (Exception e) {
+								e.printStackTrace();
 							}
-
-						} catch (Exception e) {
-							e.printStackTrace();
 						}
-					}
 
-				};
-				Bukkit.getScheduler().scheduleAsyncDelayedTask(this, getitem);
-				return true;
+					};
+					Bukkit.getScheduler().scheduleAsyncDelayedTask(this,
+							getitem);
+					return true;
+				}
 			}
 
 		}
