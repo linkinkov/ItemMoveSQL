@@ -54,7 +54,6 @@ public class Main extends JavaPlugin implements CommandExecutor {
 		return false;
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean onCommandAdd(final Player player, String[] args) {
 		if (player.getItemInHand() != null
 				&& player.getItemInHand().getType() != Material.AIR) {
@@ -92,7 +91,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
 							st.close();
 						} else {
 							st.close();
-							Bukkit.getPlayer(playername)
+							Bukkit.getPlayerExact(playername)
 									.sendMessage(
 											"[ItemMoveSQL] Вы уже положили максимум вещей в базу, возвращаем вам вещь в инвентарь");
 							Bukkit.getScheduler().scheduleSyncDelayedTask(
@@ -100,10 +99,10 @@ public class Main extends JavaPlugin implements CommandExecutor {
 
 										@Override
 										public void run() {
-											ItemStack item = new ItemStack(
-													itemid, subdurabid);
+											ItemStack item = new ItemStack(itemid);
+											item.setDurability((short) subdurabid);
 											item.setAmount(amount);
-											Bukkit.getPlayer(playername)
+											Bukkit.getPlayerExact(playername)
 													.getInventory()
 													.addItem(item);
 
@@ -128,7 +127,6 @@ public class Main extends JavaPlugin implements CommandExecutor {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean onCommandView(final Player player, String[] args) {
 		player.sendMessage("[ItemMoveSQL] Выполняем запрос на просмотр вещей");
 
@@ -165,7 +163,6 @@ public class Main extends JavaPlugin implements CommandExecutor {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	private boolean onCommandGet(final Player player, String[] args) {
 		if (args[1].matches("^-?\\d+$")) {
 			final long getitemid = Long.valueOf(args[1]);
@@ -203,20 +200,20 @@ public class Main extends JavaPlugin implements CommandExecutor {
 										int getamount = amount;
 
 										public void run() {
-											ItemStack item = new ItemStack(
-													getitemid, getamount);
+											ItemStack item = new ItemStack(getitemid);
 											item.setDurability((short) getitemsubid);
-											Bukkit.getPlayer(getplayername)
+											item.setAmount(getamount);
+											Bukkit.getPlayerExact(getplayername)
 													.getInventory()
 													.addItem(item);
-											Bukkit.getPlayer(getplayername)
+											Bukkit.getPlayerExact(getplayername)
 													.sendMessage(
 															"[ItemMoveSQL] Предмет выдан");
 
 										}
 									});
 						} else {
-							Bukkit.getPlayer(playername)
+							Bukkit.getPlayerExact(playername)
 									.sendMessage(
 											"[ItemMoveSQL] запрос на получение вещи отклонён, эта вещь вам не принадлежит");
 							result.close();
