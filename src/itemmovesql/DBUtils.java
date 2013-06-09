@@ -27,7 +27,7 @@ public class DBUtils {
 			if (config.checkdb) {
 				connection = DriverManager.getConnection(config.address,
 						config.login, config.pass);
-				log.info("[ItemMoveMSQL] Connected to mysql server, creating database if not exists");
+				log.info("[Аукцион] Connected to mysql server, creating database if not exists");
 				Statement st = connection.createStatement();
 				st.executeUpdate("CREATE DATABASE IF NOT EXISTS "
 						+ config.dbname);
@@ -43,7 +43,7 @@ public class DBUtils {
 					+ "playername varchar(255)," + "itemid int,"
 					+ "itemsubid int," + "amount int" + ");");
 			st.close();
-			log.info("[ItemMoveMSQL] Connected to mysql server and database");
+			log.info("[Аукцион] Connected to mysql server and database");
 			connection.close();
 
 		} catch (SQLException e) {
