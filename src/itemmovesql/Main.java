@@ -57,7 +57,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
 	private boolean onCommandAdd(final Player player, String[] args) {
 		if (player.getItemInHand() != null
 				&& player.getItemInHand().getType() != Material.AIR) {
-			player.sendMessage("[ItemMoveSQL] Выполняем запрос на добавление вещи в базу");
+			player.sendMessage("[Аукцион] Предмет переносится в корзину...");
 
 			final ItemStack iteminhand = player.getItemInHand();
 			player.setItemInHand(null);
@@ -87,13 +87,13 @@ public class Main extends JavaPlugin implements CommandExecutor {
 									+ itemid
 									+ "', '"
 									+ subdurabid + "', '" + amount + "')");
-							player.sendMessage("[ItemMoveSQL] Предмет успешно добавлен в базу");
+							player.sendMessage("[Аукцион] Предмет успешно добавлен в корзину");
 							st.close();
 						} else {
 							st.close();
 							Bukkit.getPlayerExact(playername)
 									.sendMessage(
-											"[ItemMoveSQL] Вы уже положили максимум вещей в базу, возвращаем вам вещь в инвентарь");
+											"[Аукцион] Корзина заполнена, возвращаем вам предмет в инвентарь");
 							Bukkit.getScheduler().scheduleSyncDelayedTask(
 									thisclass, new Runnable() {
 
@@ -121,14 +121,14 @@ public class Main extends JavaPlugin implements CommandExecutor {
 			Bukkit.getScheduler().scheduleAsyncDelayedTask(this, additemtodb);
 
 		} else {
-			player.sendMessage("[ItemMoveSQL] Нельзя добавлять пустой итем в базу");
+			player.sendMessage("[Аукцион] Нечего добавить в корзину");
 		}
 
 		return true;
 	}
 
 	private boolean onCommandView(final Player player, String[] args) {
-		player.sendMessage("[ItemMoveSQL] Выполняем запрос на просмотр вещей");
+		player.sendMessage("[Аукцион] Выполняем запрос на просмотр предметов");
 
 		Runnable viewitems = new Runnable() {
 			String playername = player.getName();
@@ -143,7 +143,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
 							.executeQuery("SELECT keyint, itemid, itemsubid, amount FROM itemstorage WHERE playername = '"
 									+ playername + "'");
 					while (result.next()) {
-						player.sendMessage("[ItemMoveSQL]Номер вещи в БД "
+						player.sendMessage("[Аукцион]Номер вещи в корзине "
 								+ result.getInt(1)
 								+ " id вещи: "
 								+ result.getInt(2)
@@ -166,7 +166,7 @@ public class Main extends JavaPlugin implements CommandExecutor {
 	private boolean onCommandGet(final Player player, String[] args) {
 		if (args[1].matches("^-?\\d+$")) {
 			final long getitemid = Long.valueOf(args[1]);
-			player.sendMessage("[ItemMoveSQL] Выполняем запрос на получение вещи из БД");
+			player.sendMessage("[Аукцион] Получаем предмет из корзины...");
 			Runnable getitem = new Runnable() {
 
 				String playername = player.getName();
@@ -208,14 +208,14 @@ public class Main extends JavaPlugin implements CommandExecutor {
 													.addItem(item);
 											Bukkit.getPlayerExact(getplayername)
 													.sendMessage(
-															"[ItemMoveSQL] Предмет выдан");
+															"[Аукцион] Предмет получен");
 
 										}
 									});
 						} else {
 							Bukkit.getPlayerExact(playername)
 									.sendMessage(
-											"[ItemMoveSQL] запрос на получение вещи отклонён, эта вещь вам не принадлежит");
+											"[Аукцион] Предмет вам не доступен!");
 							result.close();
 							conn.close();
 						}
